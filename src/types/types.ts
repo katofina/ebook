@@ -11,7 +11,7 @@ export interface FormValues {
 
 type FormPurpose = "login" | "signup";
 
-type BookStatus = "exchange" | "sold" | "sale";
+export type BookStatus = "exchange" | "sold" | "sale";
 
 export type Book = {
   id: string;

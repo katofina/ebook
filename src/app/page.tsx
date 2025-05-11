@@ -1,3 +1,4 @@
+import { BookStatusChip } from "@/components/BookStatusChip";
 import { SALE, SOLD } from "@/constants/constants";
 import { supabase } from "@/lib/supabaseClient";
 import {
@@ -7,7 +8,11 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  Button,
 } from "@mui/material";
+import Link from "next/link";
+
+export const revalidate = 300;
 
 export default async function HomePage() {
   const { data: books, error } = await supabase
@@ -59,6 +64,7 @@ export default async function HomePage() {
                   display: "flex",
                   flexDirection: "column",
                   width: "320px",
+                  position: "relative"
                 }}
               >
                 <CardMedia
@@ -79,18 +85,21 @@ export default async function HomePage() {
                     <strong>Автор: </strong> {book.author}
                   </Typography>
 
-                  <Chip
-                    label={
-                      book.status === SALE
-                        ? "Для продажи"
-                        : book.status === SOLD
-                        ? "Продано"
-                        : "Для обмена"
-                    }
-                    color={book.status === SOLD ? "warning" : "success"}
-                    size="medium"
-                    sx={{ mt: 2, fontSize: "15px" }}
-                  />
+                  <BookStatusChip status={book.status}/>
+
+                  <Link href={`book/${book.id}`} passHref>
+                    <Button
+                      sx={{
+                        color: "white",
+                        backgroundColor: "GrayText",
+                        position: "absolute",
+                        right: 10,
+                        bottom: 10
+                      }}
+                    >
+                      Подробнее
+                    </Button>
+                  </Link>
                 </CardContent>
               </Card>
             </div>
@@ -104,4 +113,3 @@ export default async function HomePage() {
     </Container>
   );
 }
-export const revalidate = 300;
