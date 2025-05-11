@@ -21,14 +21,6 @@ export default function SignForm({ onSubmit, error, type }: FormProps) {
     formState: { errors },
   } = useForm<FormValues>();
 
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) return null; //to render only on client to avoid errors
-
   const isLogin = type === LOGIN;
 
   return (

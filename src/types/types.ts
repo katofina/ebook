@@ -11,4 +11,16 @@ export interface FormValues {
 
 type FormPurpose = "login" | "signup";
 
-export type ToastPurpose = "success" | "error" | "info" | "warning";
+type BookStatus = "exchange" | "sold" | "sale";
+
+export type Book = {
+  id: string;
+  title: string;
+  author: string;
+  description: string;
+  genres: string[];
+  publish_date: string;
+  images: string[]
+  owner: string;
+  status: BookStatus;
+};
