@@ -1,10 +1,13 @@
 import { BookStatusChip } from "@/components/BookStatusChip";
+import Comments from "@/components/Comments";
 import { supabase } from "@/lib/supabaseClient";
 import {
+  Box,
   Card,
   CardContent,
   CardMedia,
   Container,
+  Divider,
   Typography,
 } from "@mui/material";
 
@@ -52,16 +55,22 @@ export default async function BookDetailPage({ params }: { params: Params }) {
       <Card
         sx={{
           width: "100%",
-          maxWidth: "600px",
+          maxWidth: "800px",
           display: "flex",
           flexDirection: "column",
           borderRadius: "12px",
           boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+          paddingBottom: "20px",
         }}
       >
         <CardMedia
           component="img"
-          height="400px"
+          sx={{
+            height: "600px",
+            width: "450px",
+            objectFit: "cover",
+            margin: "0 auto",
+          }}
           image={book.images ? book.images[0] : "/noimage.jpg"}
           alt={book.title}
         />
@@ -71,10 +80,12 @@ export default async function BookDetailPage({ params }: { params: Params }) {
             padding: "20px",
             display: "flex",
             flexDirection: "column",
-            gap: "10px"
+            gap: "10px",
           }}
         >
-          <Typography variant="h5">{book.title}</Typography>
+          <Typography variant="h5" sx={{ fontWeight: 700 }}>
+            {book.title}
+          </Typography>
 
           <Typography variant="subtitle1" color="text.secondary">
             <strong>Автор: </strong>
@@ -98,6 +109,15 @@ export default async function BookDetailPage({ params }: { params: Params }) {
 
           <BookStatusChip status={book.status} />
         </CardContent>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Box sx={{ padding: "20px" }}>
+          <Typography variant="h5" sx={{ marginBottom: "10px" }}>
+            Комментарии:
+          </Typography>
+          <Comments book_id={id} />
+        </Box>
       </Card>
     </Container>
   );

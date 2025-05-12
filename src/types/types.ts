@@ -13,7 +13,7 @@ type FormPurpose = "login" | "signup";
 
 export type BookStatus = "exchange" | "sold" | "sale";
 
-export type Book = {
+export interface Book {
   id: string;
   title: string;
   author: string;
@@ -23,4 +23,12 @@ export type Book = {
   images: string[]
   owner: string;
   status: BookStatus;
+};
+
+export interface Comment {
+  id: string;
+  content: string;
+  created_at: string;
+  book_id: string;
+  user_id: string;
 };
