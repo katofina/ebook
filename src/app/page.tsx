@@ -1,5 +1,4 @@
 import { BookStatusChip } from "@/components/BookStatusChip";
-import { SALE, SOLD } from "@/constants/constants";
 import { supabase } from "@/lib/supabaseClient";
 import {
   Container,
@@ -7,7 +6,6 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Chip,
   Button,
 } from "@mui/material";
 import Link from "next/link";
@@ -47,6 +45,22 @@ export default async function HomePage() {
         Здесь вы можете публиковать книги для обмена или продажи, просматривать
         книги других и оставлять комментарии.
       </Typography>
+
+      <Link href="/addbook" passHref>
+        <Button
+          variant="contained"
+          sx={{
+            margin: "10px",
+            backgroundColor: "#D47C3C",
+            fontSize: "16px",
+            color: "white",
+            textTransform: "none",
+            padding: "10px 20px",
+          }}
+        >
+          Добавить книгу
+        </Button>
+      </Link>
 
       <div
         style={{

@@ -4,13 +4,6 @@ export interface FormProps {
   type: FormPurpose;
 }
 
-export interface FormValues {
-  email: string;
-  password: string;
-}
-
-type FormPurpose = "login" | "signup";
-
 export type BookStatus = "exchange" | "sold" | "sale";
 
 export interface Book {
