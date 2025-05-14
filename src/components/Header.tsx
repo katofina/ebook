@@ -1,31 +1,14 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export const Header = () => {
   const router = useRouter();
-  const [isLogin, setIsLogin] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data) setIsLogin(!!data.session);
-      setLoading(false);
-    };
-
-    checkAuth();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_, session) => setIsLogin(!!session)
-    );
-
-    return () => authListener.subscription.unsubscribe();
-  }, []);
+  const { isLoading, session } = useAuth();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -45,9 +28,9 @@ export const Header = () => {
             </Button>
           </Link>
         </Typography>
-        {!loading && (
+        {!isLoading && (
           <Box>
-            {isLogin ? (
+            {session ? (
               <>
                 <Link href="/profile" passHref>
                   <Button color="inherit" sx={{ marginRight: 2 }}>

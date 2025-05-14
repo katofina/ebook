@@ -107,6 +107,11 @@ export default async function BookDetailPage({ params }: { params: Params }) {
             {new Date(book.publish_date).toLocaleDateString()}
           </Typography>
 
+          <Typography variant="subtitle1" color="text.secondary">
+            <strong>Владелец: </strong>
+            {book.owner}
+          </Typography>
+
           <BookStatusChip status={book.status} />
         </CardContent>
 
