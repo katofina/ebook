@@ -81,7 +81,7 @@ export default function SignUpPage() {
     if (uploadError) {
       setError(uploadError.message);
     } else {
-      const { data, error: updateError } = await supabase
+      const { error: updateError } = await supabase
         .from("users")
         .insert([{ email, nickname, avatar_url: avatarUrl }]);
 

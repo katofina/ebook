@@ -1,9 +1,3 @@
-export interface FormProps {
-  onSubmit: (data: { email: string; password: string }) => void;
-  error: string;
-  type: FormPurpose;
-}
-
 export type BookStatus = "exchange" | "sold" | "sale";
 
 export interface Book {
