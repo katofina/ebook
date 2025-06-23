@@ -1,11 +1,8 @@
-import { BookStatusChip } from "@/components/BookStatusChip";
+import { OneBook } from "@/components/Book";
 import { supabase } from "@/lib/supabaseClient";
 import {
   Container,
   Typography,
-  Card,
-  CardContent,
-  CardMedia,
   Button,
 } from "@mui/material";
 import Link from "next/link";
@@ -72,51 +69,7 @@ export default async function HomePage() {
       >
         {books.length ? (
           books.map((book) => (
-            <div key={book.id}>
-              <Card
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  width: "320px",
-                  position: "relative"
-                }}
-              >
-                <CardMedia
-                  component="img"
-                  height="240px"
-                  image={book.images ? book.images[0] : "/noimage.jpg"}
-                  alt={book.title}
-                />
-
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6">{book.title}</Typography>
-
-                  <Typography
-                    variant="subtitle2"
-                    gutterBottom
-                    color="text.secondary"
-                  >
-                    <strong>Автор: </strong> {book.author}
-                  </Typography>
-
-                  <BookStatusChip status={book.status}/>
-
-                  <Link href={`book/${book.id}`} passHref>
-                    <Button
-                      sx={{
-                        color: "white",
-                        backgroundColor: "GrayText",
-                        position: "absolute",
-                        right: 10,
-                        bottom: 10
-                      }}
-                    >
-                      Подробнее
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            </div>
+            <OneBook key={book.id} book={book}/>
           ))
         ) : (
           <Typography>
