@@ -1,20 +1,37 @@
 "use client";
 
-import { Button, Card, CardContent, CardMedia, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+} from "@mui/material";
 import { BookStatusChip } from "./BookStatusChip";
 import Link from "next/link";
 import { Book } from "@/types/types";
 import { useAuth } from "@/context/AuthContext";
 import IsOwner from "@/functions/IsOwner";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 interface Prop {
   book: Book;
 }
 
-export const OneBook = ({book}: Prop) => {
-  const {session} = useAuth();
+export const OneBook = ({ book }: Prop) => {
+  const { session } = useAuth();
   const [isOwner, setIsOwner] = useState(false);
+  const searchParams = useSearchParams();
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+      return params.toString();
+    },
+    [searchParams]
+  );
 
   useEffect(() => {
     if (session) {
@@ -48,7 +65,10 @@ export const OneBook = ({book}: Prop) => {
 
         <BookStatusChip status={book.status} />
 
-        <Link href={`book/${book.id}`} passHref>
+        <Link
+          href={`book/${book.id}/${String(isOwner)}`}
+          passHref
+        >
           <Button
             sx={{
               color: "white",

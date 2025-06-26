@@ -1,8 +1,11 @@
 import { BookStatusChip } from "@/components/BookStatusChip";
 import Comments from "@/components/Comments";
-import { supabase } from "@/lib/supabaseClient";
+import { DeleteButton } from "@/components/DeleteButton";
+import getBookByID from "@/functions/getBookByID";
 import {
   Box,
+  Button,
+  ButtonGroup,
   Card,
   CardContent,
   CardMedia,
@@ -10,19 +13,16 @@ import {
   Divider,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 
-type Params = Promise<{ id: string }>;
+type Params = Promise<{ id: string; own: string }>;
 
 export default async function BookDetailPage({ params }: { params: Params }) {
-  const { id } = await params;
+  const { id, own } = await params;
 
-  const { data: book, error } = await supabase
-    .from("books")
-    .select(
-      "title, author, description, genres, publish_date, images, status, owner"
-    )
-    .eq("id", id)
-    .single();
+  const isOwner = own === "true" ? true : false;
+
+  const { book, error } = await getBookByID(id);
 
   if (error) {
     return (
@@ -112,7 +112,17 @@ export default async function BookDetailPage({ params }: { params: Params }) {
             {book.owner}
           </Typography>
 
-          <BookStatusChip status={book.status} />
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <BookStatusChip status={book.status} />
+            {isOwner && (
+              <ButtonGroup>
+                <Link href={`/updatebook/${id}`} passHref>
+                  <Button>Редактировать</Button>
+                </Link>
+                <DeleteButton id={id}/>
+              </ButtonGroup>
+            )}
+          </Box>
         </CardContent>
 
         <Divider sx={{ my: 2 }} />
