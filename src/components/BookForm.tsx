@@ -20,6 +20,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import findNick from "@/functions/findNick";
 
 interface FormData {
   title: string;
@@ -34,7 +35,7 @@ interface Prop {
   defaultValues: Book;
 }
 
-export const BookForm = ({defaultValues}: Prop) => {
+export const BookForm = ({ defaultValues }: Prop) => {
   const {
     register,
     handleSubmit,
@@ -43,15 +44,15 @@ export const BookForm = ({defaultValues}: Prop) => {
     watch,
     control,
   } = useForm<Book>();
-  
-  const { isLoading, session } = useAuth();
+
+  const { isLoading, session, nick } = useAuth();
   const [url, setUrl] = useState<string | null>(defaultValues?.images[0]);
   const [error, setError] = useState("");
   const [file, setFile] = useState<File | null>(null);
 
   const router = useRouter();
 
-  if(isLoading) return <Typography>Loading...</Typography>;
+  if (isLoading) return <Typography>Loading...</Typography>;
 
   if (!session)
     return (
@@ -63,15 +64,9 @@ export const BookForm = ({defaultValues}: Prop) => {
   const genres = watch("genres", []);
 
   const onSubmit = async (data: FormData) => {
-    const { data: dataNick } = await supabase
-      .from("users")
-      .select("nickname")
-      .eq("email", session?.user.email)
-      .single();
-
     let coverUrl = "";
-    if (file && dataNick) {
-      const filePath = `covers/${dataNick.nickname}/${data.title}`;
+    if (file && nick) {
+      const filePath = `covers/${nick}/${data.title}`;
       const { error } = await supabase.storage
         .from("avatars")
         .update(filePath, file);
@@ -88,13 +83,16 @@ export const BookForm = ({defaultValues}: Prop) => {
 
     const newBook = {
       ...data,
-      owner: dataNick?.nickname,
+      owner: nick,
       images: [coverUrl],
       publish_date: new Date(),
     };
 
-    const { data: bookData, error } = await supabase.from("books").upsert([newBook]).select();
-    if (error) setError(error.message)
+    const { data: bookData, error } = await supabase
+      .from("books")
+      .upsert([newBook])
+      .select();
+    if (error) setError(error.message);
     else router.replace(`/book/${bookData[0].id}/true`);
   };
 

@@ -17,5 +17,5 @@ export interface Comment {
   content: string;
   created_at: string;
   book_id: string;
-  user_id: string;
+  user: string;
 };

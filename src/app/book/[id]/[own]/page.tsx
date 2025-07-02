@@ -1,7 +1,9 @@
 import { BookStatusChip } from "@/components/BookStatusChip";
+import { CommentForm } from "@/components/CommentForm";
 import Comments from "@/components/Comments";
 import { DeleteButton } from "@/components/DeleteButton";
 import getBookByID from "@/functions/getBookByID";
+import { supabase } from "@/lib/supabaseClient";
 import {
   Box,
   Button,
@@ -119,7 +121,7 @@ export default async function BookDetailPage({ params }: { params: Params }) {
                 <Link href={`/updatebook/${id}`} passHref>
                   <Button>Редактировать</Button>
                 </Link>
-                <DeleteButton id={id}/>
+                <DeleteButton id={id} />
               </ButtonGroup>
             )}
           </Box>
@@ -127,10 +129,7 @@ export default async function BookDetailPage({ params }: { params: Params }) {
 
         <Divider sx={{ my: 2 }} />
 
-        <Box sx={{ padding: "20px" }}>
-          <Typography variant="h5" sx={{ marginBottom: "10px" }}>
-            Комментарии:
-          </Typography>
+        <Box sx={{ padding: "0 20px" }}>
           <Comments book_id={id} />
         </Box>
       </Card>
