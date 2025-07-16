@@ -1,19 +1,14 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
-import { supabase } from "@/lib/supabaseClient";
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { SignOutButton } from "./SignOutButton";
 
 export const Header = () => {
   const router = useRouter();
-  const { isLoading, session } = useAuth();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/auth/login");
-  };
+  const { isLoading, session, nick } = useAuth();
 
   return (
     <AppBar position="static" sx={{ backgroundColor: "#D47C3C" }}>
@@ -32,14 +27,12 @@ export const Header = () => {
           <Box>
             {session ? (
               <>
-                <Link href="/profile" passHref>
+                <Link href={`/profile/${nick}`} passHref>
                   <Button color="inherit" sx={{ marginRight: 2 }}>
                     Профиль
                   </Button>
                 </Link>
-                <Button color="inherit" onClick={handleLogout}>
-                  Выйти
-                </Button>
+                <SignOutButton color='inherit'/>
               </>
             ) : (
               <>

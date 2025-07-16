@@ -4,7 +4,7 @@ export default async function getBookByID(id: string) {
   const { data: book, error } = await supabase
     .from("books")
     .select(
-      "title, author, description, genres, publish_date, images, status, owner"
+      "title, author, description, genres, publish_date, images, status, owner, id"
     )
     .eq("id", id)
     .single();

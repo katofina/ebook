@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Avatar,
   Box,
   Button,
   Card,
@@ -13,6 +14,7 @@ import { useEffect, useState } from "react";
 import { CommentForm } from "./CommentForm";
 import { supabase } from "@/lib/supabaseClient";
 import { useAuth } from "@/context/AuthContext";
+import { getAvatar } from "@/functions/getAvatar";
 interface Prop {
   book_id: string;
 }
@@ -21,7 +23,7 @@ export default function Comments({ book_id }: Prop) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [errorDel, setErrorDel] = useState<string | null>(null);
-  const { session, nick } = useAuth();
+  const { nick } = useAuth();
 
   const updateComment = async () => {
     const { data, error } = await supabase
@@ -40,21 +42,15 @@ export default function Comments({ book_id }: Prop) {
       .from("comments")
       .delete()
       .eq("id", id);
-      
+
+    if (error) setErrorDel(error.message);
+
     updateComment();
   };
 
   useEffect(() => {
     updateComment();
   }, []);
-
-  if (error)
-    return <Typography>Ошибка при загрузке комментариев: {error}</Typography>;
-
-  if (!comments || comments.length === 0)
-    return (
-      <Typography>Нет комментариев. Вы можете оставить его первым.</Typography>
-    );
 
   return (
     <>
@@ -68,17 +64,23 @@ export default function Comments({ book_id }: Prop) {
       <Typography variant="h5" sx={{ marginBottom: "10px" }}>
         Комментарии:
       </Typography>
+      {error && (
+        <Typography>Ошибка при загрузке комментариев: {error}</Typography>
+      )}
+      {(!comments || comments.length === 0) && (
+        <Typography>
+          Нет комментариев. Вы можете оставить его первым.
+        </Typography>
+      )}
       {comments.map((item) => (
         <Card key={item.id} sx={{ marginBottom: "10px" }}>
           <CardContent
             sx={{ display: "flex", flexDirection: "column", gap: "15px" }}
           >
-            <Typography
-              color="text.secondary"
-              sx={{ textDecorationLine: "underline" }}
-            >
-              {item.user}
-            </Typography>
+            <Box sx={{ display: "flex", gap: "10px", alignItems: "center" }}>
+              <Avatar src={getAvatar(item.user)} />
+              <Typography variant="h5">{item.user}</Typography>
+            </Box>
             <Typography variant="body2" color="text.primary">
               {item.content}
             </Typography>

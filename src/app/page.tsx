@@ -1,10 +1,6 @@
-import { OneBook } from "@/components/Book";
+import { AllBooks } from "@/components/AllBooks";
 import { supabase } from "@/lib/supabaseClient";
-import {
-  Container,
-  Typography,
-  Button,
-} from "@mui/material";
+import { Container, Typography, Button, Box } from "@mui/material";
 import Link from "next/link";
 
 export const revalidate = 300;
@@ -26,7 +22,7 @@ export default async function HomePage() {
     );
 
   return (
-    <Container sx={{ margin: "10px" }}>
+    <Box sx={{ margin: "10px" }}>
       <Typography
         variant="subtitle1"
         sx={{
@@ -59,24 +55,7 @@ export default async function HomePage() {
         </Button>
       </Link>
 
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "16px",
-          marginTop: "20px",
-        }}
-      >
-        {books.length ? (
-          books.map((book) => (
-            <OneBook key={book.id} book={book}/>
-          ))
-        ) : (
-          <Typography>
-            Пока здесь ещё нет ни одной книги. Будьте первым!
-          </Typography>
-        )}
-      </div>
-    </Container>
+      <AllBooks books={books}/>
+    </Box>
   );
 }

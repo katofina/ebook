@@ -3,7 +3,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import { Book, BookStatus } from "@/types/types";
-import { CloudUpload } from "@mui/icons-material";
 import { EXCHANGE, genresAll, SALE, SOLD } from "@/constants/constants";
 import {
   Alert,
@@ -20,7 +19,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import findNick from "@/functions/findNick";
+import { CloudUpload } from "@mui/icons-material";
 
 interface FormData {
   title: string;
@@ -44,11 +43,21 @@ export const BookForm = ({ defaultValues }: Prop) => {
     watch,
     control,
   } = useForm<Book>();
+  console.log(defaultValues);
 
   const { isLoading, session, nick } = useAuth();
-  const [url, setUrl] = useState<string | null>(defaultValues?.images[0]);
   const [error, setError] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [url, setUrl] = useState<string | null>(defaultValues?.images[0]);
+
+  const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : null;
+
+    if (file) {
+      setFile(file);
+      setUrl(URL.createObjectURL(file));
+    }
+  };
 
   const router = useRouter();
 
@@ -66,9 +75,9 @@ export const BookForm = ({ defaultValues }: Prop) => {
   const onSubmit = async (data: FormData) => {
     let coverUrl = "";
     if (file && nick) {
-      const filePath = `covers/${nick}/${data.title}`;
+      const filePath = `${nick}/${data.title}`;
       const { error } = await supabase.storage
-        .from("avatars")
+        .from("covers")
         .update(filePath, file);
 
       if (error) {
@@ -77,7 +86,7 @@ export const BookForm = ({ defaultValues }: Prop) => {
         return;
       }
 
-      coverUrl = supabase.storage.from("avatars").getPublicUrl(filePath)
+      coverUrl = supabase.storage.from("covers").getPublicUrl(filePath)
         .data.publicUrl;
     }
 
@@ -90,19 +99,11 @@ export const BookForm = ({ defaultValues }: Prop) => {
 
     const { data: bookData, error } = await supabase
       .from("books")
-      .upsert([newBook])
+      .update([newBook])
+      .eq("id", defaultValues.id)
       .select();
     if (error) setError(error.message);
     else router.replace(`/book/${bookData[0].id}/true`);
-  };
-
-  const handleCoverChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files ? event.target.files[0] : null;
-
-    if (file) {
-      setFile(file);
-      setUrl(URL.createObjectURL(file));
-    }
   };
 
   return (

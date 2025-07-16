@@ -12,8 +12,7 @@ import Link from "next/link";
 import { Book } from "@/types/types";
 import { useAuth } from "@/context/AuthContext";
 import IsOwner from "@/functions/IsOwner";
-import { useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface Prop {
   book: Book;
@@ -22,16 +21,6 @@ interface Prop {
 export const OneBook = ({ book }: Prop) => {
   const { session } = useAuth();
   const [isOwner, setIsOwner] = useState(false);
-  const searchParams = useSearchParams();
-
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-      return params.toString();
-    },
-    [searchParams]
-  );
 
   useEffect(() => {
     if (session) {
@@ -65,10 +54,7 @@ export const OneBook = ({ book }: Prop) => {
 
         <BookStatusChip status={book.status} />
 
-        <Link
-          href={`book/${book.id}/${String(isOwner)}`}
-          passHref
-        >
+        <Link href={`book/${book.id}/${String(isOwner)}`} passHref>
           <Button
             sx={{
               color: "white",
