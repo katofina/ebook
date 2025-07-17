@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { CommentForm } from "./CommentForm";
 import { supabase } from "@/lib/supabaseClient";
 import { useAuth } from "@/context/AuthContext";
-import { getAvatar } from "@/functions/getAvatar";
+
 interface Prop {
   book_id: string;
 }
@@ -23,7 +23,31 @@ export default function Comments({ book_id }: Prop) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [errorDel, setErrorDel] = useState<string | null>(null);
+  const [avatars, setAvatars] = useState<Record<string, string>>({});
   const { nick } = useAuth();
+
+  useEffect(() => {
+    const fetchAvatars = async () => {
+      const uniqueUsers = [...new Set(comments.map((c) => c.user))];
+      const avatarEntries = await Promise.all(
+        uniqueUsers.map(async (user) => {
+          const { data } = await supabase
+            .from("users")
+            .select("avatar_url")
+            .eq("nickname", user)
+            .single();
+          const avatarUrl = data ? data.avatar_url : "./avatar.svg";
+          return [user, avatarUrl];
+        })
+      );
+
+      setAvatars(Object.fromEntries(avatarEntries));
+    };
+
+    if (comments.length > 0) {
+      fetchAvatars();
+    }
+  }, [comments]);
 
   const updateComment = async () => {
     const { data, error } = await supabase
@@ -78,7 +102,7 @@ export default function Comments({ book_id }: Prop) {
             sx={{ display: "flex", flexDirection: "column", gap: "15px" }}
           >
             <Box sx={{ display: "flex", gap: "10px", alignItems: "center" }}>
-              <Avatar src={getAvatar(item.user)} />
+              <Avatar src={avatars[item.user] || undefined} alt={item.user} />
               <Typography variant="h5">{item.user}</Typography>
             </Box>
             <Typography variant="body2" color="text.primary">

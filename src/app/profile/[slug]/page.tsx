@@ -1,5 +1,5 @@
 import { SignOutButton } from "@/components/SignOutButton";
-import { getAvatar } from "@/functions/getAvatar";
+import { supabase } from "@/lib/supabaseClient";
 import {
   Avatar,
   Box,
@@ -17,7 +17,12 @@ interface Prop {
 
 export default async function ProfilePage({ params }: Prop) {
   const { slug } = await params;
-  const avatarURL = getAvatar(slug);
+  const { data } = await supabase
+    .from("users")
+    .select("avatar_url")
+    .eq("nickname", slug)
+    .single();
+  const avatarURL = data ? data.avatar_url : "/avatar.svg";
 
   return (
     <Box
@@ -50,7 +55,7 @@ export default async function ProfilePage({ params }: Prop) {
           Посмотреть все ваши книги
         </Button>
       </Link>
-      <Link href={`/edit`} passHref>
+      <Link href={`/profile/${slug}/edit`} passHref>
         <Button color="info" variant="outlined">
           Обновить аватар
         </Button>
